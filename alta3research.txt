@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Set your desired password expiration value (in days) here
+# For example, to set it to 90 days, use PASS_MAX_DAYS=90
+PASS_MAX_DAYS=90
+
+# Check if the login.defs file exists
+if [ -f "/etc/login.defs" ]; then
+    # Check if PASS_MAX_DAYS is already set
+    if grep -q "^PASS_MAX_DAYS" /etc/login.defs; then
+        # If PASS_MAX_DAYS is found, replace the existing value
+        sed -i "s/^PASS_MAX_DAYS.*/PASS_MAX_DAYS $PASS_MAX_DAYS/" /etc/login.defs
+    else
+        # If PASS_MAX_DAYS is not found, add it to the end of the file
+        echo "PASS_MAX_DAYS $PASS_MAX_DAYS" >> /etc/login.defs
+    fi
+
+    echo "PASS_MAX_DAYS parameter set to $PASS_MAX_DAYS days."
+else
+    echo "Error: /etc/login.defs file not found. Make sure the file exists and try again."
+fi
