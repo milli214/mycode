@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# List of GCP projects where alarms should be turned off
+PROJECTS=("abc1" "abc2" "abc3" "abc4")
+
+# Function to turn off alarms in a project
+turn_off_alarms() {
+    local project_id="$1"
+
+    echo "Turning off alarms in project: $project_id"
+    
+    # Disable all the alarms for the project
+    gcloud alpha monitoring policies list --project="$project_id" --format="value(name)" | while read -r alarm_name; do
+        gcloud alpha monitoring policies update "$alarm_name" --project="$project_id" --disable
+    done
+
+    echo "Alarms turned off in project: $project_id"
+}
+
+# Loop through the projects and turn off alarms
+for project in "${PROJECTS[@]}"; do
+    turn_off_alarms "$project"
+done
