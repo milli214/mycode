@@ -1,21 +1,42 @@
-app-monitoring
-identity-security
-magneto-blueprism
-magneto-health-pa-mgmt-project
-magneto-nuance
-magneto-shared-services
-magneto-shared-vpc-host
-management-snow
-P2-CISCO
-magneto-vdi-access
-P2-CL1-ACQUEON
-P2-CL1-CALABRIO
-P2-CL1-L1000-CCAI
-P2-CL1-QLIK
-P2-CL1-SNOW
-P2-CL1-SNOW-MID
-P2-NEXTALK
-P2-NOVELVOX
-P2-SHARED-SERVICES
-P2-SHARED-VPC
-P2-TRUIEM
+#!/bin/bash
+
+# List of GCP projects
+PROJECTS=("identity-security"
+          "magneto-blueprism"
+          "magneto-health-pa-mgmt-project"
+          "magneto-nuance"
+          "magneto-shared-services"
+          "magneto-shared-vpc-host"
+          "management-snow"
+          "P2-CISCO"
+          "magneto-vdi-access"
+          "P2-CL1-ACQUEON"
+          "P2-CL1-CALABRIO"
+          "P2-CL1-L1000-CCAI"
+          "P2-CL1-QLIK"
+          "P2-CL1-SNOW"
+          "P2-CL1-SNOW-MID"
+          "P2-NEXTALK"
+          "P2-NOVELVOX"
+          "P2-SHARED-SERVICES"
+          "P2-SHARED-VPC"
+          "P2-TRUIEM")
+
+# Function to stop instances in a project
+stop_instances() {
+    local project_id="$1"
+
+    echo "Stopping instances in project: $project_id"
+    
+    # List instances and stop them
+    gcloud compute instances list --project="$project_id" --format="value(name)" | while read -r instance_name; do
+        gcloud compute instances stop "$instance_name" --project="$project_id" --zone="us-central1-a" --quiet
+    done
+
+    echo "Instances stopped in project: $project_id"
+}
+
+# Loop through the projects and stop instances
+for project in "${PROJECTS[@]}"; do
+    stop_instances "$project"
+done
